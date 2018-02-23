@@ -8,12 +8,10 @@ import requests
 conf = yaml.load(open(sys.argv[1]).read())
 
 print 'HDFC'
-h = hdfc.HDFC()
-hdfc_data = h.get_unbilled(**conf['hdfc'])
+hdfc_data = hdfc.get_unbilled(**conf['hdfc'])
 
 print 'AMEX'
-a = amex.AMEX()
-amex_data = a.get_unbilled(**conf['amex'])
+amex_data = amex.get_unbilled(**conf['amex'])
 
 print 'Pushing notification'
 data = {

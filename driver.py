@@ -6,10 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 class Driver(object):
-    def __init__(self):
+    def __enter__(self):
         opts = Options()
         opts.add_argument("--headless")
         self._d = webdriver.Chrome(chrome_options=opts)
+        return self
 
     def wait_for(self, selector, by=By.XPATH, timeout=9999):
         return WebDriverWait(self._d, timeout).until(EC.visibility_of_element_located((by, selector)))
@@ -30,3 +31,6 @@ class Driver(object):
 
     def __getattr__(self, name):
         return getattr(self._d, name)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._d.quit()
