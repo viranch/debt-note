@@ -14,10 +14,7 @@ def get_unbilled(username, password):
         browser.click('//section[data-module-name="axp-marketing-offer"]//span[contains(@class, "dls-icon-close")]', timeout=5)
 
         # get balance details
-        browser.click('//button[@title="Balance & Credit Details"]')
-        unbilled = browser.wait_for('//table[@class="balance-details-list"]/tbody/tr[4]/td[3]/span').text
-        browser.click('//header[@role="heading"]/span/button')
-        browser.wait_for_invisibility('//header[@role="heading"]')
+        unbilled = browser.wait_for('//div[@class="summary-info"]/ul/li[2]//div[@class="data-value"]/span').text
 
         # logout
         print 'Logging out'
