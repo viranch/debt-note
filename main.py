@@ -2,22 +2,24 @@
 # -*- coding: utf-8 -*-
 
 import sys, yaml
-import hdfc, amex
+import importlib
 import requests
 
 conf = yaml.load(open(sys.argv[1]).read())
+data = []
 
-print 'HDFC'
-hdfc_data = hdfc.get_unbilled(**conf['hdfc'])
-
-print 'AMEX'
-amex_data = amex.get_unbilled(**conf['amex'])
+for bank in conf['banks']:
+    name = bank.pop('name')
+    print name
+    debt = importlib.import_module(name.lower()).get_unbilled(**bank)
+    data.append({'name': name, 'debt': debt})
+    print
 
 print 'Pushing notification'
 data = {
     'app_key': conf['pushed']['key'],
     'app_secret': conf['pushed']['secret'],
     'target_type': 'app',
-    'content': 'HDFC: ₹{}\nAmex: ₹{}'.format(hdfc_data, amex_data)
+    'content': '\n'.join('{name}: ₹{debt}'.format(**d) for d in data)
 }
 requests.post('https://api.pushed.co/1/push', data=data)

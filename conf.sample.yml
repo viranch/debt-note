@@ -1,10 +1,11 @@
-hdfc:
-  username: foo
-  password: bar
+banks:
+  - name: HDFC
+    username: foo
+    password: bar
 
-amex:
-  username: foo
-  password: bar
+  - name: Amex
+    username: foo
+    password: bar
 
 pushed:
   key: foo
