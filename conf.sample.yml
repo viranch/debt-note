@@ -1,0 +1,11 @@
+hdfc:
+  username: foo
+  password: bar
+
+amex:
+  username: foo
+  password: bar
+
+pushed:
+  key: foo
+  secret: bar
