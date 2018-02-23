@@ -1,5 +1,4 @@
-from selenium.webdriver.common.by import By
-from driver import Driver
+from driver import Driver, By
 
 def get_unbilled(username, password):
     with Driver() as browser:
