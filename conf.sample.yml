@@ -2,10 +2,12 @@ banks:
   - name: HDFC
     username: foo
     password: bar
+    billing_cycle: 13
 
   - name: Amex
     username: foo
     password: bar
+    billing_cycle: 24
 
 pushed:
   key: foo

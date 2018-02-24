@@ -11,11 +11,15 @@ def get_unbilled(username, password):
         browser.type_input(password, 'fldPassword')
         browser.click('chkrsastu', by=By.NAME)
         browser.click('//img[@alt="Login"]')
+        browser.wait_for('//frame[@name="main_part"]')
 
         # read unbilled message
         print 'Reading data'
         browser.switch_to.frame('main_part')
-        unbilled = browser.wait_for('CCActiveMatSummary1', By.ID).text
+        unbilled = browser.wait_for('CCActiveMatSummary1', By.ID).text.split()[-1]
+        browser.click('//img[@id="cclist"]/parent::a')
+        browser.switch_to.frame('CC')
+        billed = browser.wait_for('//table[@id="tab_id"]/tbody/tr[2]/td[2]').text.split()[-1]
         browser.switch_to.default_content()
 
         # logout
@@ -24,4 +28,4 @@ def get_unbilled(username, password):
         browser.click('//img[@alt="Log Out"]')
         browser.wait_for('//body')
 
-    return unbilled.split()[-1]
+    return billed, unbilled
