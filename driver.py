@@ -9,6 +9,7 @@ class Driver(object):
     def __enter__(self):
         opts = Options()
         opts.add_argument("--headless")
+        opts.add_argument("--window-size=1920x1080")
         self._d = webdriver.Chrome(chrome_options=opts)
         return self
 
