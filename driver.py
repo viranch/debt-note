@@ -13,13 +13,13 @@ class Driver(object):
         self._d = webdriver.Chrome(chrome_options=opts)
         return self
 
-    def wait_for(self, selector, by=By.XPATH, timeout=9999):
+    def wait_for(self, selector, by=By.XPATH, timeout=15):
         return WebDriverWait(self._d, timeout).until(EC.visibility_of_element_located((by, selector)))
 
     def wait_for_invisibility(self, selector, by=By.XPATH):
-        return WebDriverWait(self._d, 9999).until(EC.invisibility_of_element_located((by, selector)))
+        return WebDriverWait(self._d, 15).until(EC.invisibility_of_element_located((by, selector)))
 
-    def click(self, selector, by=By.XPATH, timeout=9999):
+    def click(self, selector, by=By.XPATH, timeout=15):
         try:
             return self.wait_for(selector, by, timeout).click()
         except TimeoutException:
