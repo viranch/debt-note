@@ -4,7 +4,7 @@
 import sys, yaml
 import importlib
 from datetime import datetime
-import requests
+import json, requests
 
 conf = yaml.load(open(sys.argv[1]).read())
 data = []
@@ -25,10 +25,13 @@ for bank in conf['banks']:
 message = '\n'.join(lines)
 
 print 'Pushing notification'
-data = {
-    'app_key': conf['pushed']['key'],
-    'app_secret': conf['pushed']['secret'],
-    'target_type': 'app',
-    'content': message
+headers = {
+    'Access-Token': conf['pushbullet']['token'],
+    'Content-Type': 'application/json'
 }
-requests.post('https://api.pushed.co/1/push', data=data)
+data = {
+    'title': 'Debt Note',
+    'body': message,
+    'type': 'note'
+}
+requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=json.dumps(data))

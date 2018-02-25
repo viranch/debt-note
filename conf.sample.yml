@@ -9,6 +9,5 @@ banks:
     password: bar
     billing_cycle: 24
 
-pushed:
-  key: foo
-  secret: bar
+pushbullet:
+  token: foo
