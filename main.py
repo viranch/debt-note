@@ -18,7 +18,7 @@ for bank in conf['banks']:
 lines = []
 for bank in conf['banks']:
     if datetime.today().date < bank['billing_cycle']:
-        m = '{name}: ₹{debt[1]} | ₹0'
+        m = '{name}: ₹{debt[1]}'
     else:
         m = '{name}: ₹{debt[0]} | ₹{debt[1]}'
     lines.append(m.format(**bank))
