@@ -12,7 +12,7 @@ def get_unbilled(username, password):
 
             # skip marketing modal
             print 'Reading data'
-            browser.click('//section[data-module-name="axp-marketing-offer"]//span[contains(@class, "dls-icon-close")]', timeout=5)
+            browser.click('//section[@data-module-name="axp-marketing-offer"]//span[contains(@class, "dls-icon-close")]', timeout=5)
 
             # get balance details
             billed = browser.wait_for('//div[@class="summary-title"]/div[1]/div[2]/div/span').text.split()[-1]
