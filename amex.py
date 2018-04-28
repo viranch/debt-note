@@ -16,7 +16,8 @@ def get_unbilled(username, password):
 
             # get balance details
             billed = browser.wait_for('//div[@class="summary-title"]/div[1]/div[2]/div/span').text.split()[-1]
-            unbilled = browser.wait_for('//section[@id="recent-activity"]/div[1]/div[2]/p').text.split()[1]
+            balance = browser.wait_for('//div[@class="summary-info"]/ul/li[2]/div/div[2]/div/span[1]').text.split()[1]
+            unbilled = '{:,}'.format(float(balance.replace(',', '')) - float(billed.replace(',', '')))
 
             # logout
             print 'Logging out'
