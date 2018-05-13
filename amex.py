@@ -5,10 +5,10 @@ def get_unbilled(username, password):
         try:
             # login
             print 'Logging in'
-            browser.get('https://global.americanexpress.com/myca/logon/japa/action?request_type=LogonHandler&Face=en_IN')
+            browser.get('https://www.americanexpress.com/in/')
             browser.type_input(username, 'UserID')
             browser.type_input(password, 'Password')
-            browser.click('//a[@alt="Log in to Online Services"]')
+            browser.click('//button[@id="login-submit"]')
 
             # skip marketing modal
             print 'Reading data'
