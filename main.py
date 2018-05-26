@@ -16,12 +16,22 @@ for bank in conf['banks']:
     print
 
 lines = []
+totals = [0, 0]
 for bank in conf['banks']:
+    debt = bank['debt']
     if datetime.today().day < bank['billing_cycle']:
         m = '{name}: ₹{debt[1]}'
+        totals[0] += float(debt[1].replace(',', ''))
     else:
         m = '{name}: ₹{debt[0]} | ₹{debt[1]}'
+        totals[0] += float(debt[0].replace(',', ''))
+        totals[1] += float(debt[1].replace(',', ''))
     lines.append(m.format(**bank))
+
+if totals[1] == 0:
+    totals.pop()
+total_str = 'Total: ' + ' | '.join('₹{}'.format(t) for t in totals)
+lines.append(total_str)
 message = '\n'.join(lines)
 
 print 'Pushing notification'
