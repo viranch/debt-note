@@ -1,14 +1,15 @@
 from driver import Driver, By
+import time
 
 def get_unbilled(username, password):
     with Driver() as browser:
         try:
             # login
             print 'Logging in'
-            browser.get('https://www.americanexpress.com/in/')
-            browser.type_input(username, 'UserID')
-            browser.type_input(password, 'Password')
-            browser.click('//button[@id="login-submit"]')
+            browser.get('https://global.americanexpress.com/login')
+            browser.type_input(username, 'eliloUserID', By.ID)
+            browser.type_input(password, 'eliloPassword', By.ID)
+            browser.click('//button[@type="submit"]')
 
             # skip marketing modal
             print 'Reading data'
