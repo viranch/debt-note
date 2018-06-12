@@ -1,5 +1,4 @@
 from driver import Driver, By
-import time
 
 def get_unbilled(username, password):
     with Driver() as browser:
