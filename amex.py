@@ -24,7 +24,7 @@ def get_unbilled(username, password):
             browser.click('//button[contains(@class, "GlobalHeader__closed___35m2e")]')
             browser.wait_for('//body')
         except:
-            browser.get_screenshot_as_file('/tmp/amex_capture.png')
+            browser.get_screenshot_as_file('/tmp/{}_capture.png'.format(__name__))
             raise
 
     return billed, unbilled

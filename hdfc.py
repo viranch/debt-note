@@ -24,7 +24,7 @@ def get_unbilled(username, password):
             browser.switch_to.frame('CC')
             billed = browser.wait_for('//table[@id="tab_id"]/tbody/tr[2]/td[2]').text.split()[-1]
         except:
-            browser.get_screenshot_as_file('/tmp/hdfc_capture.png')
+            browser.get_screenshot_as_file('/tmp/{}_capture.png'.format(__name__))
             raise
         finally:
             if logged_in:
