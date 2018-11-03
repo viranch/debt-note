@@ -1,3 +1,4 @@
+import pickle
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -29,6 +30,19 @@ class Driver(object):
         elem = self.wait_for(selector, by)
         elem.clear()
         elem.send_keys(value)
+
+    def load_cookies(self, module):
+        filename = '{}_cookies.pkl'.format(module)
+        try:
+            cookies = pickle.load(open(filename, 'rb'))
+            for cookie in cookies:
+                self._d.add_cookie(cookie)
+        except IOError:
+            pass
+
+    def dump_cookies(self, module):
+        filename = '{}_cookies.pkl'.format(module)
+        pickle.dump(self._d.get_cookies() , open(filename, 'wb'))
 
     def __getattr__(self, name):
         return getattr(self._d, name)

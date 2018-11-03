@@ -1,13 +1,27 @@
 banks:
   - name: HDFC
+    currency: ₹
     username: foo
     password: bar
     billing_cycle: 13
 
   - name: Amex
+    currency: ₹
     username: foo
     password: bar
     billing_cycle: 24
+
+  - name: BofA
+    currency: $
+    username: foo
+    password: bar
+    billing_cycle: 32
+
+  - name: SFCU
+    currency: $
+    username: foo
+    password: bar
+    billing_cycle: 32
 
 pushbullet:
   token: foo

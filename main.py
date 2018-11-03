@@ -12,26 +12,28 @@ data = []
 for bank in conf['banks']:
     name = bank['name']
     print name
+    bank['currency'] = bank['currency'].encode('utf-8').strip()
     bank['debt'] = importlib.import_module(name.lower()).get_unbilled(bank['username'], bank['password'])
     print
 
 lines = []
-totals = [0, 0]
+currency_totals = {}
 for bank in conf['banks']:
     debt = bank['debt']
+    totals = currency_totals.setdefault(bank['currency'], [0, 0])
     if datetime.today().day < bank['billing_cycle']:
-        m = '{name}: ₹{debt[1]}'
+        m = '{name}: {currency}{debt[1]}'
         totals[0] += float(debt[1].replace(',', ''))
     else:
-        m = '{name}: ₹{debt[0]} | ₹{debt[1]}'
+        m = '{name}: {currency}{debt[0]} | {currency}{debt[1]}'
         totals[0] += float(debt[0].replace(',', ''))
         totals[1] += float(debt[1].replace(',', ''))
     lines.append(m.format(**bank))
 
-if totals[1] == 0:
-    totals.pop()
-total_str = 'Total: ' + ' | '.join('₹{}'.format(t) for t in totals)
-lines.append(total_str)
+for totals in currency_totals.values():
+    if totals[1] == 0:
+        totals.pop()
+lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems())
 message = '\n'.join(lines)
 
 print 'Pushing notification'
