@@ -1,4 +1,4 @@
-from driver import Driver, By
+from driver import Driver, By, TimeoutException
 
 def get_unbilled(username, password):
     login_url = 'https://secure.bankofamerica.com/login/sign-in/signOnV2Screen.go'
@@ -21,9 +21,13 @@ def get_unbilled(username, password):
         finally:
             print 'Logging out'
             browser.get('https://secure.bankofamerica.com/myaccounts/signoff/signoff-default.go')
-            browser.wait_for('//h1[text()="Signing Out"]')
-            browser.wait_for_invisibility('//h1[text()="Signing Out"]')
-            browser.wait_for('//body')
+            try:
+                browser.wait_for('//*[contains(text(), "Signing Out")]')
+                browser.wait_for_invisibility('//*[contains(text(), "Signing Out")]')
+            except TimeoutException:
+                pass
+            finally:
+                browser.wait_for('//body')
             browser.get(login_url)
             browser.wait_for('//body')
             browser.dump_cookies(__name__)
