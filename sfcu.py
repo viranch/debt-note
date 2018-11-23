@@ -15,7 +15,7 @@ def get_unbilled(username, password):
 
             # read balance
             print 'Reading data'
-            browser.wait_for('//span[@class="customer-name"]', timeout=30)
+            browser.wait_for('//*[contains(@class, "currency-debt")]', timeout=30)
             balance = browser.find_elements_by_class_name('currency-debt')[-1].text[1:]
         except:
             browser.get_screenshot_as_file('/tmp/{}_capture.png'.format(__name__))
