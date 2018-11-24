@@ -9,7 +9,10 @@ import json, requests
 conf = yaml.load(open(sys.argv[1]).read())
 data = []
 
-for bank in conf['banks']:
+# optionally filter by name for debugging
+banks = [b for b in conf['banks'] if len(sys.argv) < 3 or b['name'].lower() == sys.argv[2].lower()]
+
+for bank in banks:
     name = bank['name']
     print name
     bank['currency'] = bank['currency'].encode('utf-8').strip()
@@ -18,7 +21,7 @@ for bank in conf['banks']:
 
 lines = []
 currency_totals = {}
-for bank in conf['banks']:
+for bank in banks:
     debt = bank['debt']
     totals = currency_totals.setdefault(bank['currency'], [0, 0])
     if datetime.today().day < bank['billing_cycle']:
