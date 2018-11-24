@@ -23,5 +23,11 @@ banks:
     password: bar
     billing_cycle: 32
 
+  - name: CreditStacks
+    currency: $
+    username: foo
+    password: bar
+    billing_cycle: 32
+
 pushbullet:
   token: foo
