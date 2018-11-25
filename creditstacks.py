@@ -17,6 +17,7 @@ def get_unbilled(username, password):
 
     print 'Logging out'
     session.delete('https://bb2.creditstacks.com/user', headers=headers)
+    session.close()
 
     balance = data['creditLimit'] - data['openToBuy']
 
