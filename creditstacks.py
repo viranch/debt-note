@@ -11,18 +11,13 @@ def get_unbilled(username, password):
     headers['authorization'] = r.json()['accessToken']
 
     print 'Reading data'
-    q = {'query': '{me{transactions {type,amount,status} }}'}
+    q = {'query': '{me{account{coreData{openToBuy,creditLimit}}}}'}
     r = session.get('https://bb2.creditstacks.com/api-v1', headers=headers, data=json.dumps(q))
-    data = r.json()['data']['me']['transactions']
+    data = r.json()['data']['me']['account']['coreData']
 
     print 'Logging out'
     session.delete('https://bb2.creditstacks.com/user', headers=headers)
 
-    balance = 0
-    for trx in data:
-        if trx['type'] == 'TXN' and trx['status'] in ['SETTLED', 'PENDING']:
-            balance += trx['amount']
-        elif trx['type'] == 'PAYMENT':
-            balance -= trx['amount']
+    balance = data['creditLimit'] - data['openToBuy']
 
     return (None, str(balance))
