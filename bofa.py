@@ -20,14 +20,8 @@ def get_unbilled(username, password):
             raise
         finally:
             print 'Logging out'
-            browser.get('https://secure.bankofamerica.com/myaccounts/signoff/signoff-default.go')
-            try:
-                browser.wait_for('//*[contains(text(), "Signing Out")]')
-                browser.wait_for_invisibility('//*[contains(text(), "Signing Out")]')
-            except TimeoutException:
-                pass
-            finally:
-                browser.wait_for('//body')
+            browser.click('//a[@name="onh_sign_off"]')
+            browser.wait_for('//body')
             browser.get(login_url)
             browser.wait_for('//body')
             browser.dump_cookies(__name__)
