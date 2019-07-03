@@ -24,13 +24,13 @@ currency_totals = {}
 for bank in banks:
     debt = bank['debt']
     totals = currency_totals.setdefault(bank['currency'], [0, 0])
-    if datetime.today().day < bank['billing_cycle']:
-        m = '{name}: {currency}{debt[1]}'
-        totals[0] += float(debt[1].replace(',', ''))
-    else:
+    if datetime.today().day < bank['billing_cycle'] + 5:
         m = '{name}: {currency}{debt[0]} | {currency}{debt[1]}'
         totals[0] += float(debt[0].replace(',', ''))
         totals[1] += float(debt[1].replace(',', ''))
+    else:
+        m = '{name}: {currency}{debt[1]}'
+        totals[0] += float(debt[1].replace(',', ''))
     lines.append(m.format(**bank))
 
 for totals in currency_totals.values():

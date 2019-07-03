@@ -1,5 +1,8 @@
 from driver import Driver, By, TimeoutException
 
+def tonumber(browser, xpath):
+    return float(browser.wait_for(xpath).text[1:].replace(',', ''))
+
 def get_unbilled(username, password):
     login_url = 'https://secure.bankofamerica.com/login/sign-in/signOnV2Screen.go'
     with Driver() as browser:
@@ -14,7 +17,12 @@ def get_unbilled(username, password):
 
             # read balance
             print 'Reading data'
-            balance = browser.wait_for('//div[contains(@class,"AccountItemCreditCard")]/div[contains(@class,"AccountBalance")]/span').text[1:]
+            browser.click('//div[contains(@class,"AccountItemCreditCard")]//a[@name="CCA_details"]')
+            current = tonumber(browser, '//div[contains(@class,"summary-acct-row")][1]/div[2]')
+            previous = tonumber(browser, '//div[contains(@class,"statement-details")]/div[contains(@class,"ptc-row")][1]/div[2]')
+            due = tonumber(browser, '//div[contains(@class,"statement-details")]/div[contains(@class,"ptc-row")][last()]/div[2]')
+            if due > 0:
+                current -= previous
         except:
             browser.get_screenshot_as_file('/tmp/{}_capture.png'.format(__name__))
             raise
@@ -26,4 +34,4 @@ def get_unbilled(username, password):
             browser.wait_for('//body')
             browser.dump_cookies(__name__)
 
-    return (None, balance)
+    return (str(previous), str(current))

@@ -1,5 +1,13 @@
 import pickle
 from driver import Driver, By
+import time
+
+def tonumber(s):
+    return float(s[1:].replace(',', ''))
+
+def read_hidden_value(browser, xpath):
+    script = "return document.evaluate('" + xpath + "', document, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;"
+    return tonumber(browser.execute_script(script))
 
 def get_unbilled(username, password):
     login_url = 'https://e.sfcu.org/sfcuonline/uux.aspx#/login'
@@ -16,7 +24,17 @@ def get_unbilled(username, password):
             # read balance
             print 'Reading data'
             browser.wait_for('//*[contains(@class, "currency-debt")]', timeout=30)
-            balance = browser.find_elements_by_class_name('currency-debt')[-1].text[1:]
+            current = tonumber(browser.find_elements_by_class_name('currency-debt')[-1].text)
+            time.sleep(5); browser.wait_for('//div[contains(@class,"sidebar-content")]/div/div[2]')
+            browser.click('//div[contains(@class,"tile-card-container")]/div[3]/div/div[1]')
+
+            # read previous statement
+            browser.wait_for('//div[contains(@class,"account-details ")]')
+            previous = read_hidden_value(browser, '//div[contains(@class,"detail-tab-pane")]/dl/div[2]/dd/span')
+            due = read_hidden_value(browser, '//div[contains(@class,"detail-tab-pane")]/dl/div[6]/dd/span')
+            if due > 0:
+                current -= previous
+
         except:
             browser.get_screenshot_as_file('/tmp/{}_capture.png'.format(__name__))
             raise
@@ -29,4 +47,4 @@ def get_unbilled(username, password):
             browser.wait_for('//body')
             browser.dump_cookies(__name__)
 
-    return (None, balance)
+    return (str(previous), str(current))
