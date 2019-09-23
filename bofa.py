@@ -17,7 +17,7 @@ def get_unbilled(username, password):
 
             # read balance
             print 'Reading data'
-            browser.click('//div[contains(@class,"AccountItemCreditCard")]//a[@name="CCA_details"]')
+            browser.click('//div[contains(@class,"AccountItemCreditCard")]//a[@name="CCA_details"]', timeout=30)
             current = tonumber(browser, '//div[contains(@class,"summary-acct-row")][1]/div[2]')
             previous = tonumber(browser, '//div[contains(@class,"statement-details")]/div[contains(@class,"ptc-row")][1]/div[2]')
             due = tonumber(browser, '//div[contains(@class,"statement-details")]/div[contains(@class,"ptc-row")][last()]/div[2]')
