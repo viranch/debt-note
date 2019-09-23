@@ -3,7 +3,11 @@ from driver import Driver, By
 import time
 
 def tonumber(s):
-    return float(s[1:].replace(',', ''))
+    negative = (s.startswith('+ ') or (s[0] == '(' and s[-1] == ')'))
+    if negative:
+        s = s.replace('+ ', '').replace('(', '').replace(')', '')
+    num = float(s[1:].replace(',', ''))
+    return num * -1 if negative else num
 
 def read_hidden_value(browser, xpath):
     script = "return document.evaluate('" + xpath + "', document, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;"
