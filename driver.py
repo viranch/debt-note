@@ -1,3 +1,4 @@
+import os
 import pickle
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,7 +10,8 @@ from selenium.common.exceptions import TimeoutException
 class Driver(object):
     def __enter__(self):
         opts = Options()
-        opts.add_argument("--headless")
+        if not os.getenv('DEBUG', False):
+            opts.add_argument("--headless")
         opts.add_argument("--window-size=1920x1080")
         self._d = webdriver.Chrome(chrome_options=opts)
         return self
