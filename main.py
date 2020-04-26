@@ -36,7 +36,7 @@ for bank in banks:
 for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
-lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems())
+lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems() if len(tot) > 1)
 message = '\n'.join(lines)
 
 print 'Pushing notification'
