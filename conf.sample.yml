@@ -29,5 +29,21 @@ banks:
     password: bar
     billing_cycle: 32
 
+budget_tracker:
+  buckets:
+    - label: Groceries
+      categories:
+        - Supermarkets and Groceries
+        - Food and Beverage Store
+      descriptions:
+        - INSTACART
+        - HLLFRSH
+    - label: Restaurants
+      descriptions:
+        - DOORDASH*
+    - label: Digital Purchase
+      descriptions:
+        - Amazon
+
 pushbullet:
   token: foo

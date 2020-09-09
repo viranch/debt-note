@@ -17,11 +17,14 @@ for bank in banks:
     name = bank['name']
     print name
     bank['currency'] = bank['currency'].encode('utf-8').strip()
-    bank['debt'] = importlib.import_module(name.lower()).get_unbilled(bank['username'], bank['password'])
+    bank_module = importlib.import_module(name.lower())
+    bank['debt'] = bank_module.get_unbilled(bank['username'], bank['password'])
+    bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
     print
 
 lines = []
 currency_totals = {}
+budget_spends = {}
 for bank in banks:
     debt = bank['debt']
     totals = currency_totals.setdefault(bank['currency'], [0, 0])
@@ -34,11 +37,20 @@ for bank in banks:
         totals[0] += float(debt[1].replace(',', ''))
     lines.append(m.format(**bank))
 
+    cat_spend = bank['cat_spend']
+    for label, amount in cat_spend.iteritems():
+        budget_spends[label] = budget_spends.get(label, 0) + amount
+
 for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
 if len(currency_totals) > 1 or len(banks) > 1:
     lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems())
+
+if len(budget_spends) > 0:
+    lines.append('\nBudgets:')
+    for label, amount in sorted(budget_spends.items(), key=lambda i: i[1], reverse=True):
+        lines.append('${} {}'.format(amount, label))
 
 message = '\n'.join(lines)
 
