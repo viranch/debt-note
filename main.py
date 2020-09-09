@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import sys, yaml
 import importlib
 from datetime import datetime
@@ -39,14 +40,17 @@ for totals in currency_totals.values():
 lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems() if len(tot) > 1)
 message = '\n'.join(lines)
 
-print 'Pushing notification'
-headers = {
-    'Access-Token': conf['pushbullet']['token'],
-    'Content-Type': 'application/json'
-}
-data = {
-    'title': 'Debt Note',
-    'body': message,
-    'type': 'note'
-}
-requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=json.dumps(data))
+if os.getenv('DEBUG', False):
+    print message
+else:
+    print 'Pushing notification'
+    headers = {
+        'Access-Token': conf['pushbullet']['token'],
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'title': 'Debt Note',
+        'body': message,
+        'type': 'note'
+    }
+    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=json.dumps(data))
