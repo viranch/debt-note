@@ -37,7 +37,9 @@ for bank in banks:
 for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
-lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems() if len(tot) > 1)
+if len(currency_totals) > 1 or len(banks) > 1:
+    lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems())
+
 message = '\n'.join(lines)
 
 if os.getenv('DEBUG', False):
