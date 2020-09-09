@@ -8,5 +8,8 @@ def get_unbilled(username, password):
         'secret': secret,
         'access_token': account_token
     }, headers={'Content-Type': 'application/json'}).json()
-    current = sum(a['balances']['current'] for a in data['accounts'] if a['subtype'] == 'credit card')
+
+    cards = {a['mask']: a['balances']['current'] for a in data.get('accounts', []) if a['subtype'] == 'credit card'}
+    current = sum(cards.values())
+
     return (str(0), str(current))
