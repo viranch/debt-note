@@ -40,7 +40,7 @@ def get_category_spending(username, password, budget_config):
         for bucket in budget_config['buckets']:
             lbl = bucket['label']
             categories = [lbl] + bucket.get('categories', [])
-            if trx_cat in categories or any(desc in trx_desc for desc in bucket['descriptions']):
+            if (trx_cat in categories or any(desc in trx_desc for desc in bucket.get('descriptions', []))) and not any(desc in trx_desc for desc in bucket.get('exclude_descriptions', [])):
                 bucket_totals[lbl] = bucket_totals.get(lbl, 0) + trx['amount']
 
     return bucket_totals

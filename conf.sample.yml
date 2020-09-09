@@ -38,12 +38,15 @@ budget_tracker:
       descriptions:
         - INSTACART
         - HLLFRSH
+      exclude_descriptions:
+        - Target
     - label: Restaurants
       descriptions:
         - DOORDASH*
     - label: Digital Purchase
       descriptions:
         - Amazon
+        - Target
 
 pushbullet:
   token: foo
