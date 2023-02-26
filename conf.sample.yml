@@ -50,3 +50,7 @@ budget_tracker:
 
 pushbullet:
   token: foo
+
+pushover:
+  user_key: foo
+  api_key: bar

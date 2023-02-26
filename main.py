@@ -5,7 +5,7 @@ import os
 import sys, yaml
 import importlib
 from datetime import datetime
-import json, requests
+import requests
 
 conf = yaml.safe_load(open(sys.argv[1]).read())
 data = []
@@ -66,13 +66,22 @@ if os.getenv('DEBUG', False):
     print message
 else:
     print 'Pushing notification'
-    headers = {
-        'Access-Token': conf['pushbullet']['token'],
-        'Content-Type': 'application/json'
-    }
-    data = {
-        'title': 'Debt Note',
-        'body': message,
-        'type': 'note'
-    }
-    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=json.dumps(data))
+    pb = conf.get('pushbullet')
+    po = conf.get('pushover')
+    if pb:
+        headers = {
+            'Access-Token': pb['token'],
+            'Content-Type': 'application/json'
+        }
+        data = {
+            'title': 'Debt Note',
+            'body': message,
+            'type': 'note'
+        }
+        requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, json=data)
+    if po:
+        requests.post('https://api.pushover.net/1/messages.json', data={
+            'user': po['user_key'],
+            'token': po['api_key'],
+            'message': message,
+        })
