@@ -11,6 +11,9 @@ def get_unbilled(username, password):
         'access_token': account_token
     }, headers={'Content-Type': 'application/json'}).json()
 
+    if 'error_code' in data:
+        raise Exception(data['error_code'])
+
     cards = {a['mask']: a['balances']['current'] for a in data.get('accounts', []) if a['subtype'] == 'credit card'}
     current = sum(cards.values())
 
@@ -41,6 +44,9 @@ def get_category_spending(username, password, budget_config):
             lbl = bucket['label']
             categories = [lbl] + bucket.get('categories', [])
             if (trx_cat in categories or any(desc in trx_desc for desc in bucket.get('descriptions', []))) and not any(desc in trx_desc for desc in bucket.get('exclude_descriptions', [])):
-                bucket_totals[lbl] = bucket_totals.get(lbl, 0) + trx['amount']
+                bucket_totals.setdefault(lbl, []).append({'amount': trx['amount'], 'desc': trx['name']})
+    print(bucket_totals)
+
+    bucket_totals = dict((k, sum(t['amount'] for t in v)) for k, v in bucket_totals.items())
 
     return bucket_totals

@@ -7,7 +7,7 @@ import importlib
 from datetime import datetime
 import json, requests
 
-conf = yaml.load(open(sys.argv[1]).read())
+conf = yaml.safe_load(open(sys.argv[1]).read())
 data = []
 
 # optionally filter by name for debugging
@@ -18,14 +18,22 @@ for bank in banks:
     print name
     bank['currency'] = bank['currency'].encode('utf-8').strip()
     bank_module = importlib.import_module(name.lower())
-    bank['debt'] = bank_module.get_unbilled(bank['username'], bank['password'])
-    bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
+    try:
+        bank['debt'] = bank_module.get_unbilled(bank['username'], bank['password'])
+        bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
+    except Exception as e:
+        bank['error'] = e
     print
 
 lines = []
 currency_totals = {}
 budget_spends = {}
 for bank in banks:
+    e = bank.get('error')
+    if e is not None:
+        lines.append('{name}: {err}'.format(name=bank['name'], err=e))
+        continue
+
     debt = bank['debt']
     totals = currency_totals.setdefault(bank['currency'], [0, 0])
     if datetime.today().day < bank['billing_cycle'] + 5:
@@ -37,7 +45,7 @@ for bank in banks:
         totals[0] += float(debt[1].replace(',', ''))
     lines.append(m.format(**bank))
 
-    cat_spend = bank['cat_spend']
+    cat_spend = bank.get('cat_spend', {})
     for label, amount in cat_spend.iteritems():
         budget_spends[label] = budget_spends.get(label, 0) + amount
 
@@ -45,7 +53,7 @@ for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
 if len(currency_totals) > 1 or len(banks) > 1:
-    lines.extend('Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems())
+    lines = ['Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems()] + lines
 
 if len(budget_spends) > 0:
     lines.append('\nBudgets:')
