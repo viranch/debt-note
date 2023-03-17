@@ -13,6 +13,8 @@ data = []
 # optionally filter by name for debugging
 banks = [b for b in conf['banks'] if len(sys.argv) < 3 or b['name'].lower() == sys.argv[2].lower()]
 
+nbanks = []
+
 for bank in banks:
     name = bank['name']
     print name
@@ -20,7 +22,10 @@ for bank in banks:
     bank_module = importlib.import_module(name.lower())
     try:
         bank['debt'] = bank_module.get_unbilled(bank['username'], bank['password'])
-        bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
+        bank['ndebt'] = tuple(float(d.replace(',', '')) for d in bank['debt'])
+        if sum(bank['ndebt']) != 0:
+            nbanks.append(bank)
+            bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
     except Exception as e:
         bank['error'] = e
     print
@@ -34,15 +39,18 @@ for bank in banks:
         lines.append('{name}: {err}'.format(name=bank['name'], err=e))
         continue
 
-    debt = bank['debt']
+    debt, ndebt = bank['debt'], bank['ndebt']
+    if sum(ndebt) == 0:
+        continue
+
     totals = currency_totals.setdefault(bank['currency'], [0, 0])
     if datetime.today().day < bank['billing_cycle'] + 5:
         m = '{name}: {currency}{debt[0]} | {currency}{debt[1]}'
-        totals[0] += float(debt[0].replace(',', ''))
-        totals[1] += float(debt[1].replace(',', ''))
+        totals[0] += ndebt[0]
+        totals[1] += ndebt[1]
     else:
         m = '{name}: {currency}{debt[1]}'
-        totals[0] += float(debt[1].replace(',', ''))
+        totals[0] += ndebt[1]
     lines.append(m.format(**bank))
 
     cat_spend = bank.get('cat_spend', {})
@@ -52,7 +60,7 @@ for bank in banks:
 for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
-if len(currency_totals) > 1 or len(banks) > 1:
+if len(currency_totals) > 1 or len(nbanks) > 1:
     lines = ['Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems()] + lines
 
 if len(budget_spends) > 0:
