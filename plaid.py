@@ -4,7 +4,7 @@ from datetime import date
 def get_unbilled(username, password):
     client_id, secret, account_token = password.split(',')
 
-    print 'Reading balances'
+    print('Reading balances')
     data = requests.post('https://development.plaid.com/accounts/balance/get', json={
         'client_id': client_id,
         'secret': secret,
@@ -17,6 +17,7 @@ def get_unbilled(username, password):
     cards = {a['mask']: a['balances']['current'] for a in data.get('accounts', []) if a['subtype'] == 'credit card'}
     current = sum(cards.values())
 
+    print(current)
     return (str(0), str(current))
 
 def get_category_spending(username, password, budget_config):
@@ -24,7 +25,7 @@ def get_category_spending(username, password, budget_config):
 
     bucket_totals = {}
 
-    print 'Reading transactions'
+    print('Reading transactions')
     today = date.today()
     start_date = date(today.year, today.month, 1).strftime('%Y-%m-%d')
     end_date = today.strftime('%Y-%m-%d')
@@ -37,6 +38,7 @@ def get_category_spending(username, password, budget_config):
         'options': {'count': 500}
     }, headers={'Content-Type': 'application/json'}).json()
 
+    #print(data)
     for trx in data['transactions']:
         trx_cat = trx['category'][-1]
         trx_desc = trx['name']

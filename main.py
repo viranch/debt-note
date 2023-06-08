@@ -17,26 +17,26 @@ nbanks = []
 
 for bank in banks:
     name = bank['name']
-    print name
-    bank['currency'] = bank['currency'].encode('utf-8').strip()
+    print(name)
+    bank['currency'] = bank['currency'].strip() #.encode('utf-8').strip()
     bank_module = importlib.import_module(name.lower())
     try:
         bank['debt'] = bank_module.get_unbilled(bank['username'], bank['password'])
-        bank['ndebt'] = tuple(float(d.replace(',', '')) for d in bank['debt'])
+        bank['ndebt'] = tuple(round(float(d.replace(',', '')), 2) for d in bank['debt'])
         if sum(bank['ndebt']) != 0:
             nbanks.append(bank)
             bank['cat_spend'] = bank_module.get_category_spending(bank['username'], bank['password'], conf['budget_tracker'])
     except Exception as e:
         bank['error'] = e
-    print
+    print()
 
 lines = []
 currency_totals = {}
 budget_spends = {}
 for bank in banks:
-    e = bank.get('error')
-    if e is not None:
-        lines.append('{name}: {err}'.format(name=bank['name'], err=e))
+    err = bank.get('error')
+    if err is not None:
+        lines.append(f'{bank["name"]}: {err}')
         continue
 
     debt, ndebt = bank['debt'], bank['ndebt']
@@ -54,26 +54,26 @@ for bank in banks:
     lines.append(m.format(**bank))
 
     cat_spend = bank.get('cat_spend', {})
-    for label, amount in cat_spend.iteritems():
+    for label, amount in cat_spend.items():
         budget_spends[label] = budget_spends.get(label, 0) + amount
 
 for totals in currency_totals.values():
     if totals[1] == 0:
         totals.pop()
 if len(currency_totals) > 1 or len(nbanks) > 1:
-    lines = ['Total: ' + ' | '.join('{}{}'.format(cur, t) for t in tot) for cur, tot in currency_totals.iteritems()] + lines
+    lines = ['Total: ' + ' | '.join(f'{cur}{round(t, 2)}' for t in tot) for cur, tot in currency_totals.items()] + lines
 
 if len(budget_spends) > 0:
     lines.append('\nBudgets:')
     for label, amount in sorted(budget_spends.items(), key=lambda i: i[1], reverse=True):
-        lines.append('${} {}'.format(amount, label))
+        lines.append(f'${round(amount, 2)} {label}')
 
 message = '\n'.join(lines)
 
 if os.getenv('DEBUG', False):
-    print message
+    print(message)
 else:
-    print 'Pushing notification'
+    print('Pushing notification')
     pb = conf.get('pushbullet')
     po = conf.get('pushover')
     if pb:
